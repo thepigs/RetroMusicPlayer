@@ -172,7 +172,8 @@ class RealPlaylistRepository(
             playlistId,
             idInPlaylist,
             composer ?: "",
-            albumArtist
+            albumArtist,
+            stop = false
         )
     }
 

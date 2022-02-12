@@ -148,7 +148,8 @@ class RealSongRepository(private val context: Context) : SongRepository {
             artistId,
             artistName ?: "",
             composer ?: "",
-            albumArtist ?: ""
+            albumArtist ?: "",
+            false
         )
     }
 

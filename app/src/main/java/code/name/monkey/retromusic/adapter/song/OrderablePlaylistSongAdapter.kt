@@ -16,6 +16,8 @@ package code.name.monkey.retromusic.adapter.song
 
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
@@ -29,13 +31,18 @@ import code.name.monkey.retromusic.extensions.accentOutlineColor
 import code.name.monkey.retromusic.fragments.LibraryViewModel
 import code.name.monkey.retromusic.helper.MusicPlayerRemote
 import code.name.monkey.retromusic.interfaces.ICabHolder
+import code.name.monkey.retromusic.model.PlaylistSong
 import code.name.monkey.retromusic.model.Song
+import code.name.monkey.retromusic.repository.RealRepository
+import code.name.monkey.retromusic.repository.RoomRepository
+import code.name.monkey.retromusic.repository.SongRepository
 import com.google.android.material.button.MaterialButton
 import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemAdapter
 import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.component.inject
 
 class OrderablePlaylistSongAdapter(
     private val playlist: PlaylistEntity,
@@ -103,7 +110,7 @@ class OrderablePlaylistSongAdapter(
         }
     }
 
-    inner class ViewHolder(itemView: View) : AbsOffsetSongAdapter.ViewHolder(itemView) {
+    open inner class ViewHolder(itemView: View) : AbsOffsetSongAdapter.ViewHolder(itemView) {
         val playAction: MaterialButton? = itemView.findViewById(R.id.playAction)
         val shuffleAction: MaterialButton? = itemView.findViewById(R.id.shuffleAction)
 
@@ -120,8 +127,19 @@ class OrderablePlaylistSongAdapter(
                         .show(activity.supportFragmentManager, "REMOVE_FROM_PLAYLIST")
                     return true
                 }
+                R.id.action_pause_before -> {
+                    item.setChecked(!item.isChecked)
+                    song .stop = item.isChecked
+                    saveSongs(playlist)
+                    return true
+                }
             }
             return super.onSongMenuItemClick(item)
+        }
+
+        override fun onCreatePopupMenu(menu: PopupMenu) {
+            var menuItem = menu.menu.findItem(R.id.action_pause_before);
+            menuItem.setChecked(song.stop);
         }
 
         init {

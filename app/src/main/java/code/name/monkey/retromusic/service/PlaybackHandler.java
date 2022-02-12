@@ -117,7 +117,7 @@ class PlaybackHandler extends Handler {
         break;
 
       case MusicService.PLAY_SONG:
-        service.playSongAtImpl(msg.arg1);
+        service.playSongAtImpl(msg.arg1,msg.arg2);
         break;
 
       case MusicService.SET_POSITION:

@@ -31,7 +31,8 @@ open class Song(
     open val artistId: Long,
     open val artistName: String,
     open val composer: String?,
-    open val albumArtist: String?
+    open val albumArtist: String?,
+    open var stop: Boolean
 ) : Parcelable {
 
 
@@ -55,6 +56,7 @@ open class Song(
         if (artistName != other.artistName) return false
         if (composer != other.composer) return false
         if (albumArtist != other.albumArtist) return false
+        if (stop != other.stop) return false
 
         return true
     }
@@ -93,7 +95,8 @@ open class Song(
             artistId = -1,
             artistName = "",
             composer = "",
-            albumArtist = ""
+            albumArtist = "",
+            stop = false
         )
     }
 }

@@ -20,6 +20,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
@@ -101,9 +102,11 @@ open class SongAdapter(
         } else {
             holder.menu?.show()
         }
+
         holder.title?.text = getSongTitle(song)
         holder.text?.text = getSongText(song)
         holder.text2?.text = getSongText(song)
+
         loadAlbumCover(song, holder)
         val landscape = RetroUtil.isLandscape()
         if ((PreferenceUtil.songGridSize > 2 && !landscape) || (PreferenceUtil.songGridSizeLand > 5 && landscape)) {
@@ -193,6 +196,10 @@ open class SongAdapter(
                 override fun onMenuItemClick(item: MenuItem): Boolean {
                     return onSongMenuItemClick(item) || super.onMenuItemClick(item)
                 }
+
+                override fun onCreatePopup(popup: PopupMenu) {
+                  onCreatePopupMenu(popup);
+                }
             })
         }
 
@@ -223,6 +230,8 @@ open class SongAdapter(
         override fun onLongClick(v: View?): Boolean {
             return toggleChecked(layoutPosition)
         }
+
+        open fun onCreatePopupMenu(menu: PopupMenu){}
     }
 
     companion object {

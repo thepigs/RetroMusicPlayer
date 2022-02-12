@@ -14,12 +14,20 @@
  */
 package code.name.monkey.retromusic.activities
 
+import android.app.NotificationManager
+import android.app.NotificationManager.INTERRUPTION_FILTER_NONE
+import android.app.NotificationManager.INTERRUPTION_FILTER_PRIORITY
+import android.app.NotificationManager.Policy.*
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.Settings
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.contains
 import androidx.navigation.ui.setupWithNavController
@@ -41,6 +49,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 
+
 class MainActivity : AbsCastActivity(), OnSharedPreferenceChangeListener {
     companion object {
         const val TAG = "MainActivity"
@@ -51,6 +60,7 @@ class MainActivity : AbsCastActivity(), OnSharedPreferenceChangeListener {
         return wrapSlidingMusicPanel()
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTaskDescriptionColorAuto()
@@ -58,6 +68,17 @@ class MainActivity : AbsCastActivity(), OnSharedPreferenceChangeListener {
         updateTabs()
         AppRater.appLaunched(this)
 
+        // Check if the notification policy access has been granted for the app.
+
+        // Check if the notification policy access has been granted for the app.
+        if (!(getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).isNotificationPolicyAccessGranted) {
+            val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+            startActivity(intent)
+        } else {
+            val mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            mNotificationManager.notificationPolicy  = NotificationManager.Policy(PRIORITY_CATEGORY_MEDIA,PRIORITY_SENDERS_STARRED, CONVERSATION_SENDERS_NONE)
+            mNotificationManager.setInterruptionFilter(INTERRUPTION_FILTER_PRIORITY)
+        }
         setupNavigationController()
         if (!hasPermissions()) {
             findNavController(R.id.fragment_container).navigate(R.id.permissionFragment)

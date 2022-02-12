@@ -906,11 +906,13 @@ class MusicService : MediaBrowserServiceCompat(),
 
     fun playSongAt(position: Int) {
         // handle this on the handlers thread to avoid blocking the ui thread
+        val paused = if (getSongAt(position).stop) 1 else 0;
         playerHandler?.removeMessages(PLAY_SONG)
-        playerHandler?.obtainMessage(PLAY_SONG, position, 0)?.sendToTarget()
+        playerHandler?.obtainMessage(PLAY_SONG, position, paused)
+            ?.sendToTarget()
     }
 
-    fun playSongAtImpl(position: Int) {
+    fun playSongAtImpl(position: Int, paused: Int) {
         if (!trackEndedByCrossfade) {
             // This is only imp if we are using crossfade
             if (playback is CrossFadePlayer) {
@@ -920,7 +922,10 @@ class MusicService : MediaBrowserServiceCompat(),
             trackEndedByCrossfade = false
         }
         if (openTrackAndPrepareNextAt(position)) {
-            play()
+            if (paused==0)
+                play()
+            else
+                notifyChange(PLAY_STATE_CHANGED)
         } else {
             Toast.makeText(this, resources.getString(R.string.unplayable_file), Toast.LENGTH_SHORT)
                 .show()
@@ -946,7 +951,9 @@ class MusicService : MediaBrowserServiceCompat(),
         synchronized(this) {
             try {
                 val nextPosition = getNextPosition(false)
-                playback?.setNextDataSource(getTrackUri(getSongAt(nextPosition)))
+                val song = getSongAt(nextPosition)
+                if (!song.stop)
+                    playback?.setNextDataSource(getTrackUri(song))
                 this.nextPosition = nextPosition
             } catch (ignored: Exception) {
             }

@@ -84,6 +84,7 @@ object PlaylistSongsLoader {
         val idInPlaylist = cursor.getLong(Members._ID)
         val composer = cursor.getStringOrNull(AudioColumns.COMPOSER)
         val albumArtist = cursor.getStringOrNull("album_artist")
+        val stop = false
         return PlaylistSong(
             id,
             title,
@@ -99,7 +100,8 @@ object PlaylistSongsLoader {
             playlistId,
             idInPlaylist,
             composer,
-            albumArtist
+            albumArtist,
+            stop
         )
     }
 

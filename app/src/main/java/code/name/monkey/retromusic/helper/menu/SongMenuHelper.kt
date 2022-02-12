@@ -140,10 +140,13 @@ object SongMenuHelper : KoinComponent {
 
         abstract val song: Song
 
+        open fun onCreatePopup(popup: PopupMenu){}
+
         override fun onClick(v: View) {
             val popupMenu = PopupMenu(activity, v)
             popupMenu.inflate(menuRes)
             popupMenu.setOnMenuItemClickListener(this)
+            onCreatePopup(popupMenu)
             popupMenu.show()
         }
 
